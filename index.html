@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cờ Tướng AI - Hoàn Thiện</title>
+    <style>
+        body { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #1a1a1a; font-family: Arial, sans-serif; color: white; padding: 20px; }
+        #main-container {justify-content: flex-end; mảin-lèt: 500px; display: flex; gap: 20px; align-items: flex-start; margin-top: 15px; }
+        #chessboard { position: relative; width: 400px; height: 450px; background-color: #fbce9d; border: 4px solid #5d4037; padding: 30px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .line { position: absolute; background-color: #333; }
+        .h-line { width: 400px; height: 2px; left: 30px; }
+        .v-line { width: 2px; height: 450px; top: 30px; }
+        .diagonal { position: absolute; width: 141px; height: 2px; background-color: #333; transform-origin: 0 0; z-index: 1; }
+        #river { position: absolute; top: 230px; left: 30px; width: 400px; height: 50px; display: flex; justify-content: space-around; align-items: center; font-size: 20px; font-weight: bold; color: #5d4037; pointer-events: none; }
+        
+        .click-point { position: absolute; width: 46px; height: 46px; transform: translate(-23px, -23px); z-index: 20; cursor: pointer; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
+
+        .last-move {
+            position: absolute; 
+            width: 15px; 
+            h
+            border: 2px solid white;
+            transform: translate(-7px, -7px); 
+            z-index: 5; 
+            pointer-events: none; 
+            border-radius: 50%; 
+            display: none;
+            box-shadow: 0 0 10px rgba(5,0,0,0.8);
+        
+        }
+
+        .piece { border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; position: relative; z-index: 21; transition: all 0.2s; pointer-events: none; width: 38px; height: 38px; }
+        .piece.red { background: #ffffff; border: 2px solid #d32f2f; color: #d32f2f; font-size: 20px; }
+        .piece.black { background: #ffffff; border: 2px solid #000000; color: #000000; font-size: 20px; }
+
+        .selected .piece { animation: pulse-select 0.6s infinite; box-shadow: 0 0 15px #00e5ff; border: 3px solid #00e5ff; }
+
+        .target-hint::after { 
+            content: ""; position: absolute; width: 30px; height: 30px; border: 3px solid #ff1744; border-radius: 50%; 
+            animation: pulse-target 0.6s infinite; z-index: 25; 
+        }
+
+        @keyframes pulse-select { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes pulse-target { 0% { transform: scale(0.8); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.4; } 100% { transform: scale(0.8); opacity: 1; } }
+
+        #status { margin-bottom: 10px; font-size: 18px; font-weight: bold; color: #ffeb3b; height: 30px; text-align: center; }
+        .controls { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center;}
+        
+        #right-panel { width: 250px; background: #2d2d2d; padding: 15px; border-radius: 8px; height: 510px; overflow-y: auto; border: 1px solid #444; }
+        button { padding: 10px 15px; cursor: pointer; background: #5d4037; color: white; border: none; border-radius: 5px; font-weight: bold; }
+        input { padding: 10px; border-radius: 5px; background: #333; color: white; border: 1px solid #ffeb3b; font-weight: bold; }
+        
+        .move-item { background: #444; margin-bottom: 8px; padding: 10px; border-radius: 4px; border-left: 4px solid #2196f3; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .delete-btn { background: #ff1744; color: white; border: none; border-radius: 3px; padding: 2px 8px; cursor: pointer; }
+        .confirm-btn { background: #4caf50; border: 2px solid white; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.6; } }
+    </style>
+</head>
+<body>
+
+<div id="status">HỆ THỐNG SẴN SÀNG</div>
+
+<div class="controls">
+    <input type="text" id="command-input" placeholder="gõ &quot;công cụ&quot;..." onkeyup="checkCommand(this.value)">
+    <span style="color: #4caf50; font-weight: bold;">VÁN: </span>
+    <input type="number" id="input-current-van" value="1" min="1" style="width: 60px; font-size: 18px; color: #ffeb3b;" onchange="changeVan(this.value)">
+</div>
+
+<div class="controls">
+    <span style="font-weight: bold;">BÊN ĐI TRƯỚC: </span>
+    <button onclick="setFirstTurn('red')" style="background: #ffffff; color: #d32f2f; border: 1px solid #d32f2f;">ĐỎ</button>
+    <button onclick="setFirstTurn('black')" style="background: #ffffff; color: #000; border: 1px solid #000;">ĐEN</button>
+</div>
+
+<div id="main-container">
+    <div id="chessboard">
+        <div id="grid-layer"></div>
+        <div class="diagonal" style="top:30px; left:180px; transform: rotate(45deg);"></div>
+        <div class="diagonal" style="top:30px; left:280px; transform: rotate(135deg);"></div>
+        <div class="diagonal" style="top:380px; left:180px; transform: rotate(45deg);"></div>
+        <div class="diagonal" style="top:380px; left:280px; transform: rotate(135deg);"></div>
+        <div id="river"><span>lương</span>bé<span>lập</span>trình<span></span></div>
+
+        <div id="marker-from" class="last-move"></div>
+        <div id="marker-to" class="last-move"></div>
+
+        <div id="interaction-layer"></div>
+    </div>
+
+    <div id="right-panel">
+        <h3 style="margin-top:0; color:#ffeb3b; text-align:center;">LỊCH SỬ DẠY</h3>
+        <div id="move-list"></div>
+    </div>
+</div>
+
+<div class="controls">
+    <button onclick="resetGame()" style="background:#2196f3">LÀM MỚI BÀN</button>
+    <button id="play-btn" onclick="startAI()" style="background:#ff9800">TÌM NƯỚC ĐI</button>
+    <button id="confirm-btn" onclick="confirmMove()" style="display: none;" class="confirm-btn">XÁC NHẬN ĐI</button>
+    <button id="switch-btn" onclick="switchOption()" style="background:#9c27b0; display: none;">ĐỔI NƯỚC</button>
+</div>
+
+<script>
+    const interactionLayer = document.getElementById('interaction-layer');
+    const gridLayer = document.getElementById('grid-layer');
+    const statusText = document.getElementById('status');
+    const moveListDiv = document.getElementById('move-list');
+    const confirmBtn = document.getElementById('confirm-btn');
+    const switchBtn = document.getElementById('switch-btn');
+    const markerFrom = document.getElementById('marker-from');
+    const markerTo = document.getElementById('marker-to');
+
+    let board = {};
+    let turn = 'red';
+    let selected = null;
+    let targetHint = null;
+    let currentVan = 1;
+    let currentOptions = [];
+    let currentOptionIndex = 0;
+    let db = JSON.parse(localStorage.getItem('chess_multi_path_v2') || "[]");
+
+    function createGrid() {   
+        gridLayer.innerHTML = '';
+        for(let i=0; i<10; i++) {
+            let h = document.createElement('div'); h.className = 'line h-line'; h.style.top = (30 + i * 50) + 'px'; gridLayer.appendChild(h);
+        }
+        for(let i=0; i<9; i++) {
+            let v = document.createElement('div'); v.className = 'line v-line'; v.style.left = (30 + i * 50) + 'px';
+            if (i > 0 && i < 8) {
+                v.style.height = '200px';
+                let vb = document.createElement('div'); vb.className = 'line v-line'; vb.style.left = (30 + i * 50) + 'px'; vb.style.top = '280px'; vb.style.height = '200px'; gridLayer.appendChild(vb);
+            }
+            gridLayer.appendChild(v);
+        }
+    }
+
+    function initBoard() {
+        board = {
+            "0,0":{t:'車',c:'black',id:'B_X1'}, "0,1":{t:'馬',c:'black',id:'B_M1'}, "0,2":{t:'象',c:'black',id:'B_T1'}, "0,3":{t:'士',c:'black',id:'B_S1'}, "0,4":{t:'將',c:'black',id:'B_V'}, "0,5":{t:'士',c:'black',id:'B_S2'}, "0,6":{t:'象',c:'black',id:'B_T2'}, "0,7":{t:'馬',c:'black',id:'B_M2'}, "0,8":{t:'車',c:'black',id:'B_X2'},
+            "2,1":{t:'炮',c:'black',id:'B_P1'}, "2,7":{t:'炮',c:'black',id:'B_P2'}, 
+            "3,0":{t:'卒',c:'black',id:'B_C1'}, "3,2":{t:'卒',c:'black',id:'B_C2'}, "3,4":{t:'卒',c:'black',id:'B_C3'}, "3,6":{t:'卒',c:'black',id:'B_C4'}, "3,8":{t:'卒',c:'black',id:'B_C5'},
+            "9,0":{t:'車',c:'red',id:'R_X1'}, "9,1":{t:'tiêt',c:'red',id:'R_M1'}, "9,2":{t:'相',c:'red',id:'R_T1'}, "9,3":{t:'仕',c:'red',id:'R_S1'}, "9,4":{t:'帥',c:'red',id:'R_V'}, "9,5":{t:'仕',c:'red',id:'R_S2'}, "9,6":{t:'相',c:'red',id:'R_T2'}, "9,7":{t:'馬',c:'red',id:'R_M2'}, "9,8":{t:'車',c:'red',id:'R_X2'},
+            "7,1":{t:'炮',c:'red',id:'R_P1'}, "7,7":{t:'炮',c:'red',id:'R_P2'}, 
+            "6,0":{t:'兵',c:'red',id:'R_C1'}, "6,2":{t:'兵',c:'red',id:'R_C2'}, "6,4":{t:'兵',c:'red',id:'R_C3'}, "6,6":{t:'兵',c:'red',id:'R_C4'}, "6,8":{t:'兵',c:'red',id:'R_C5'}
+        };
+        turn = 'red'; selected = null; targetHint = null;
+        markerFrom.style.display = 'none'; markerTo.style.display = 'none';
+        hideControls(); render(); updateStatus(); updateList();
+    }
+
+    function getLayout() { return Object.keys(board).sort().map(k => k + board[k].id).join(""); }
+
+    function render() {
+        interactionLayer.innerHTML = '';
+        for (let r = 0; r < 10; r++) {
+            for (let c = 0; c < 9; c++) {
+                const pos = r + ',' + c;
+                const spot = document.createElement('div');
+                spot.className = 'click-point';
+                spot.style.top = (30 + r * 50) + 'px';
+                spot.style.left = (30 + c * 50) + 'px';
+                
+                if (board[pos]) {
+                    const p = document.createElement('div');
+                    p.className = 'piece ' + board[pos].c;
+                    p.innerText = board[pos].t;
+                    spot.appendChild(p);
+                }
+                
+                if (selected === pos) spot.classList.add('selected');
+                if (targetHint === pos) spot.classList.add('target-hint');
+                
+                spot.onclick = () => handleClick(r, c);
+                interactionLayer.appendChild(spot);
+            }
+        }
+    }
+
+    function handleClick(r, c) {
+        const pos = r + ',' + c;
+        if (confirmBtn.style.display !== 'none') return; 
+        
+        if (selected) {
+            if (pos === selected) { selected = null; render(); return; }
+            executeMove(selected, pos, true);
+            selected = null;
+        } else if (board[pos] && board[pos].c === turn) {
+            selected = pos; targetHint = null; hideControls(); render();
+        }
+    }
+
+    function executeMove(from, to, save) {
+        const layoutBefore = getLayout();
+        const piece = board[from];
+        
+        // Cập nhật Marker vị trí đi
+        const [fr, fc] = from.split(',').map(Number);
+        const [tr, tc] = to.split(',').map(Number);
+        markerFrom.style.top = (30 + fr * 50) + 'px'; markerFrom.style.left = (30 + fc * 50) + 'px';
+        markerTo.style.top = (30 + tr * 50) + 'px'; markerTo.style.left = (30 + tc * 50) + 'px';
+        markerFrom.style.display = 'block'; markerTo.style.display = 'block';
+
+        if (save) {
+            db.push({ stamp: Date.now() + Math.random(), v: currentVan, lay: layoutBefore, side: turn, id: piece.id, name: piece.t, f: from, t: to });
+            localStorage.setItem('chess_multi_path_v2', JSON.stringify(db));
+            updateList();
+        }
+
+        board[to] = piece; 
+        delete board[from];
+        turn = (turn === 'red') ? 'black' : 'red';
+        targetHint = to; 
+        hideControls(); 
+        render(); 
+        updateStatus();
+    }
+
+    function startAI() {
+        const currentLayout = getLayout();
+        currentOptions = db.filter(d => d.v == currentVan && d.lay === currentLayout && d.side === turn);
+        if (currentOptions.length > 0) { 
+            currentOptionIndex = 0; 
+            showConfirmUI(); 
+        } else { 
+            statusText.innerText = "CHƯA DẠY NƯỚC ĐI NÀY!"; 
+        }
+    }
+
+    function showConfirmUI() {
+        let opt = currentOptions[currentOptionIndex];
+        statusText.innerText = `MÁY CHỌN: ${opt.name} (${opt.f} -> ${opt.t})`;
+        confirmBtn.style.display = 'inline-block';
+        switchBtn.style.display = currentOptions.length > 1 ? 'inline-block' : 'none';
+        selected = opt.f; targetHint = opt.t; render();
+    }
+
+    function confirmMove() {
+        let opt = currentOptions[currentOptionIndex];
+        executeMove(opt.f, opt.t, false);
+        selected = null; targetHint = null;
+    }
+
+    function switchOption() { 
+        currentOptionIndex = (currentOptionIndex + 1) % currentOptions.length; 
+        showConfirmUI(); 
+    }
+
+    function setFirstTurn(color) { turn = color; updateStatus(); }
+    function hideControls() { confirmBtn.style.display = 'none'; switchBtn.style.display = 'none'; }
+    function changeVan(val) { currentVan = parseInt(val) || 1; initBoard(); }
+
+    function updateList() {
+        moveListDiv.innerHTML = '';
+        db.filter(d => d.v == currentVan).reverse().forEach(d => {
+            const item = document.createElement('div'); item.className = 'move-item';
+            item.innerHTML = `<span>${d.side === 'red' ? 'Đỏ' : 'Đen'}: ${d.name} (${d.f}->${d.t})</span><button class="delete-btn" onclick="deleteMove(${d.stamp})">X</button>`;
+            moveListDiv.appendChild(item);
+        });
+    }
+
+    function deleteMove(stamp) { 
+        db = db.filter(d => d.stamp !== stamp); 
+        localStorage.setItem('chess_multi_path_v2', JSON.stringify(db)); 
+        updateList(); 
+    }
+
+    function updateStatus() { statusText.innerText = `VÁN ${currentVan} | LƯỢT: ${turn === 'red' ? 'ĐỎ' : 'ĐEN'}`; }
+    function resetGame() { initBoard(); }
+    function checkCommand(v) { if(v==='công cụ') alert('Tổng số nước đã lưu: ' + db.length); }
+
+    createGrid();
+    initBoard();
+</script>
+</body>
+</html>
