@@ -1,0 +1,41 @@
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+.dice-box { display: inline-flex; gap: 15px; margin-bottom: 20px; }
+.dice { font-size: 40px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: 2px solid #ccc; background: #fff; }
+.dice img { width: 60px; height: 60px; object-fit: contain; }
+button { padding: 12px 30px; font-size: 18px; cursor: pointer; }
+button:hover { background-color: #ff6b81; }
+</style>
+</head>
+<body>
+<div class="container">
+<h2>BẦU CUA TÔM CÁ</h2>
+<div class="dice-box">
+<div class="dice" id="dice1"><img src="ga.jpg" alt="Gà"></div>
+<div class="dice" id="dice2"><img src="ga.jpg" alt="Gà"></div>
+<div class="dice" id="dice3"><img src="ga.jpg" alt="Gà"></div>
+</div>
+<br>
+<button onclick="lacXucXac()">LẮC XÚC XẮC</button>
+</div>
+<script>
+const items = [
+    '<img src="ga.jpg" alt="Gà">',
+    '<img src="bau.jpg" alt="bau">',
+    '<img src="cua.jpg" alt="cua">',
+    '<img src="xin.jpg" alt="xin">',
+    '<img src="ca.jpg" alt="ca">',
+    '<img src="nai.jpg" alt="nai">'
+    
+];
+function lacXucXac() {
+    document.getElementById("dice1").innerHTML = items[Math.floor(Math.random() * items.length)];
+    document.getElementById("dice2").innerHTML = items[Math.floor(Math.random() * items.length)];
+    document.getElementById("dice3").innerHTML = items[Math.floor(Math.random() * items.length)];
+}
+</script>
+</body>
+</html>
+
