@@ -1,88 +1,84 @@
 <!DOCTYPE html>
-<html lang="vI">
-    <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html;">
-    <title></title>
-    <style>
-        body {
-            font-family:Arial, Helvetica, sans-serif;
-            margin: 40px auto;
-            max-width: 800px;
-            color: rgb(0, 60, 255);
-            line-height: 1,8; 
-        }
-        .tieu-de-chung {
-            text-align: center;
-            font-weight: bold;
-            font-size: 15px;
-            margin: 5px 0;
-        }
-        .tieu-de-chinh {
-            text-align: center;
-            font-weight: bold;
-            font-size: 20;
-            margin: 30px 0;
-            
-        } 
-        .noi-dung {
-            text-align: left;
-            font-size: 18px;
-            margin-top: 17px;
-        }
-        .phan-ky-ten {
-            display: flex;
-            justify-content: flex-end; 
-            text-align: center;
-            font-weight: bold;
-            margin-top: 40px;
-        }
-        .cot-ky-nguoi-vay {
-             width: 40px;
-        }
-        .huong-dan-ky {
-            font-weight: normal;
-            font-size: 16ox;
-            font-style: italic;
-        }
-    </style>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Xếp Ốc Vít</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    #hop {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .o {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        background-color: #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .8s ease;
+        z-index: 1;
+    }
+    .o.ruongXuong {
+        transform: translateY(300px);
+        opacity: 0.3;
+    }
+    .lo {
+        width: 20px;
+        height: 20px;
+        background-color: #333;
+        border-radius: 20%;
+        position: absolute;
+        top: 150px;
+        left: 250px;
+    
+    }
+    .vit {
+    
+        position: absolute;
+        top: 90px;
+        left: 400px;
+        transition: all 0.5s ease; 
+        border-radius: 50%;
+        width: 10px;
+        height: 10px;
+        background-color: gold;
+        cursor: pointer;
+        z-index: 10;
+    }
+    .o:hover .vit {
+        transform: translate(-30px, 0px) r0tate(360deg);
+    }
+</style>
+
 </head>
 <body>
-    <div class="tieu-de-chung">cộng hòa xã hội chủ nghĩa nam</div>
-    <div class="tieu-de-chung"><div style="color:hsla(270, 100%, 1%, 0.624);">Độc Lập-Tự do-Hanh Phúc</div>
-    <div class="tieu-de-chinh"><div style="color:rgb(255, 0, 234);">GIÂY VAY TIỀN</div>
+
+<h2>Mức độ 1</h2>
+<div id="hop">
+        <div class="vit" onclick="xoayVaolo()"></div>
+        <div class="o">
+    </div>
+    <div class="lo"></div>
 </div>
-
-    <div class="noi-dung">
-    <p>Họ tên người vay tiền _ _  _ _ _ _ _ _ _ _ _ _ _ _ _ _  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _</p>
-    <p>Chô ở hiện nay _ _  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _</p>
-    <p>Ngày _ _ _ tháng _ _ _năm _ _ _ _ _ có vay của ông LƯƠNG VĂN BÉ</p>
-    <div style="color:brown;">Số tiền là _ _ _ _ _ _ _ _ _ _ _ _  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _</p></div>
-    <p>bằng chữ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  </p>
-    <p>lãi suất _ _ _% trên tháng _ _ _ _ _ _ _ _ _ thời hạn trả nợ là _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ </p> 
-    <p>tôi xin cam đoan chịu trách nhiệm trước pháp luật.</p>
-    <div style="display:flex;justify-content: space-between; text-align: center; margin-top: 5px;">
-    <div style="width:35%;">
-        <strong>người cho vay</strong>
-        </div>
-    <div style="width: 35%;">
-        <strong>người làm chứng</strong>
-
-    </div>
-    <div style="width:35%;">
-        <strong>ngươi vay tiền</strong></div>
-        
-    </div>
-    <div style="text-align: right;margin-top: 20px;">
-        ngày _ _ _ tháng _ _ _ năm _ _ _ _ _
-    
-    </div>
-    <div style="text-align: left;margin-top: 45px;color:blue;">
-        LƯƠN VĂN BÉ
-    
-    </div>
 </body>
 </html>
-<div style="text-align: center; margin-top: 20px;">
-    <img src="be.jpg" style="max-width: 600px; height: auto;">
-</div>
+<script>
+function xoayVaolo() {
+    let lo = document.querySelector('.lo');
+    let vit = document.querySelector('.vit');
+    let o = document.querySelector('.o');
+
+    vit.style.position = "absolute";
+    vit.style.top = (lo.offsetTop + 2) + "px";
+    vit.style.left = (lo.offsetLeft + 2) + "px";
+    vit.style.transform = "rotate(360deg)";
+    vit.style.transition = "0.5s";
+
+    o.classList.add('ruongXuong');
+}
+</script>
+
