@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body {
+            background-color: #111;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #hien-thi-chu {
+            font-size: 20px;
+            color: #ffeb3b;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ffeb3b;
+        }
+
+        .nut-lung-linh {
+            padding: 10px 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+            background: linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff);
+            background-size: 300% 300%;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.8);
+            animation: lungLinh 3s ease infinite;
+        }
+
+        @keyframes lungLinh {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .nut-lung-linh:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <img src="bau.jpg" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 20px;">
+    <video src="aaa.mp4" width="300" controls></video>
+<div style="display: flex; gap: 10px;">
+    <button class="nut-lung-linh" onclick="docChuA()">A</button>
+    <button class="nut-lung-linh" onclick="docChuĂ()">Ă</button>
+    <button class="nut-lung-linh" onclick="docChuÂ()">Â</button>
+</div>
+<script>
+        function docChuA() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let amThanh = new SpeechSynthesisUtterance("A");
+                amThanh.lang = "vi-VN";
+                amThanh.rate = 1.2;
+                window.speechSynthesis.speak(amThanh);
+            }
+        }
+    </script>
+
+</body>
+</html>
+<script>
+        function docChuĂ() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let amThanh = new SpeechSynthesisUtterance("Ă");
+                amThanh.lang = "vi-VN";
+                amThanh.rate = 1.2;
+                window.speechSynthesis.speak(amThanh);
+            }
+        }
+   </script>
+
+</body>
+</html>
+<script>
+        function docChuÂ() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let amThanh = new SpeechSynthesisUtterance("Â");
+                amThanh.lang = "vi-VN";
+                amThanh.rate = 1.2;
+                window.speechSynthesis.speak(amThanh);
+            }
+        }
+   </script>
+
+</body>
+</html>
+
