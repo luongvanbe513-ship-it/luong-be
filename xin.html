@@ -52,15 +52,15 @@
     <img src="bau.jpg" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 20px;">
     <video src="aaa.mp4" width="300" controls></video>
 <div style="display: flex; gap: 10px;">
-    <button class="nut-lung-linh" onclick="docChuA()">A</button>
-    <button class="nut-lung-linh" onclick="docChuĂ()">Ă</button>
-    <button class="nut-lung-linh" onclick="docChuÂ()">Â</button>
+    <button class="nut-lung-linh" onclick="docChuA()">new</button>
+    <button class="nut-lung-linh" onclick="docChuĂ()">save</button>
+    <button class="nut-lung-linh" onclick="docChuÂ()">next</button>
 </div>
 <script>
         function docChuA() {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                let amThanh = new SpeechSynthesisUtterance("A");
+                let amThanh = new SpeechSynthesisUtterance("mới");
                 amThanh.lang = "vi-VN";
                 amThanh.rate = 1.2;
                 window.speechSynthesis.speak(amThanh);
@@ -74,7 +74,7 @@
         function docChuĂ() {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                let amThanh = new SpeechSynthesisUtterance("Ă");
+                let amThanh = new SpeechSynthesisUtterance("lưu");
                 amThanh.lang = "vi-VN";
                 amThanh.rate = 1.2;
                 window.speechSynthesis.speak(amThanh);
@@ -88,7 +88,7 @@
         function docChuÂ() {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                let amThanh = new SpeechSynthesisUtterance("Â");
+                let amThanh = new SpeechSynthesisUtterance("tiếp");
                 amThanh.lang = "vi-VN";
                 amThanh.rate = 1.2;
                 window.speechSynthesis.speak(amThanh);
