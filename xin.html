@@ -54,7 +54,6 @@
 <div style="display: flex; gap: 10px;">
     <button class="nut-lung-linh" onclick="docChuMới()">new</button>
     <button class="nut-lung-linh" onclick="docChuLưu()">save</button>
-    <button class="nut-lung-linh" onclick="docChuA()">next</button>
 </div>
 <script>
         function docChuMới() {
@@ -68,35 +67,34 @@
             if (viVoice) {
                 amThanh.voice = viVoice;
             }
+             window.speechSynthesis.speak(amThanh);
         }
-    </script>
-
-</body>
-</html>
-<script>
+        if (typeof speechSynthesis !== 'undefined') {
+          speechSynthesis.onvoiceschanged = function() {
+            window.speechSynthesis.getVoices();
+        };
+    }
+</script>
+<script>     
         function docChuLưu() {
-            if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 let amThanh = new SpeechSynthesisUtterance("lưu");
                 amThanh.lang = "vi-VN";
-                amThanh.rate = 1.2;
-                window.speechSynthesis.speak(amThanh);
-            }
-        }
-   </script>
+                amThanh.rate-0.8;
 
-</body>
-</html>
-<script>
-        function docChuA() {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                let amThanh = new SpeechSynthesisUtterance("tiếp");
-                amThanh.lang = "vi-VN";
-                amThanh.rate = 1.2;
-                window.speechSynthesis.speak(amThanh);
+                let voices = window.speechSynthesis.getVoices();
+            let viVoice = voices.find(v => v.lang === 'vi-VN' || v.name.includes('Vietnamese') || v.name.includes('Google'));
+            if (viVoice) {
+                amThanh.voice = viVoice;
             }
+             window.speechSynthesis.speak(amThanh);
         }
+        if (typeof speechSynthesis !== 'undefined') {
+          speechSynthesis.onvoiceschanged = function() {
+            window.speechSynthesis.getVoices();
+        };
+    }
+
    </script>
 
 </body>
