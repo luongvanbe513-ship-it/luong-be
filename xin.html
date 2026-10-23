@@ -54,6 +54,7 @@
 <div style="display: flex; gap: 10px;">
     <button class="nut-lung-linh" onclick="docChuMới()">new</button>
     <button class="nut-lung-linh" onclick="docChuLưu()">save</button>
+    <button class="nut-lung-linh" onclick="docChuTiếp()">next</button>
 </div>
 <script>
         function docChuMới() {
@@ -92,6 +93,11 @@
             window.speechSynthesis.getVoices();
         };
     }
+         function docChuTiếp() {
+                window.speechSynthesis.cancel();
+                let amThanh = new SpeechSynthesisUtterance("Tiếp");
+                amThanh.lang = "vi-VN";
+                amThanh.rate-0.8;
 
    </script>
 
