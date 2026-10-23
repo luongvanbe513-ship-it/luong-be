@@ -98,6 +98,16 @@
                 let amThanh = new SpeechSynthesisUtterance("Tiếp");
                 amThanh.lang = "vi-VN";
                 amThanh.rate-0.8;
+                let voices = window.speechSynthesis.getVoices();
+            let viVoice = voices.find(v => v.lang === 'vi-VN' || v.name.includes('Vietnamese') || v.name.includes('Google'));
+            if (viVoice) {
+                amThanh.voice = viVoice;
+            }
+             window.speechSynthesis.speak(amThanh);
+        }
+        if (typeof speechSynthesis !== 'undefined') {
+          speechSynthesis.onvoiceschanged = function() {
+            window.speechSynthesis.getVoices();
 
    </script>
 
