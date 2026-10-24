@@ -83,11 +83,6 @@
                 amThanh.voice = viVoice;
             }
              window.speechSynthesis.speak(amThanh);
-        }
-        if (typeof speechSynthesis !== 'undefined') {
-          speechSynthesis.onvoiceschanged = function() {
-            window.speechSynthesis.getVoices();
-        };
     }
          function docChuTiếp() {
                 window.speechSynthesis.cancel();
