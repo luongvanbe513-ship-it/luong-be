@@ -121,6 +121,58 @@
             }
              window.speechSynthesis.speak(amThanh);
      }
+        function docChuĐóng() {
+                window.speechSynthesis.cancel();
+                let amThanh = new SpeechSynthesisUtterance("Đóng");
+                amThanh.lang = "vi-VN";
+                amThanh.rate-0.8;
+
+                let voices = window.speechSynthesis.getVoices();
+            let viVoice = voices.find(v => v.lang === 'vi-VN' || v.name.includes('Vietnamese') || v.name.includes('Google'));
+            if (viVoice) {
+                amThanh.voice = viVoice;
+            }
+             window.speechSynthesis.speak(amThanh);
+     }
+        function docChuXác() {
+                window.speechSynthesis.cancel();
+                let amThanh = new SpeechSynthesisUtterance("Xác");
+                amThanh.lang = "vi-VN";
+                amThanh.rate-0.8;
+
+                let voices = window.speechSynthesis.getVoices();
+            let viVoice = voices.find(v => v.lang === 'vi-VN' || v.name.includes('Vietnamese') || v.name.includes('Google'));
+            if (viVoice) {
+                amThanh.voice = viVoice;
+            }
+             window.speechSynthesis.speak(amThanh);
+     }
+        function docChuThoát() {
+                window.speechSynthesis.cancel();
+                let amThanh = new SpeechSynthesisUtterance("Thoát");
+                amThanh.lang = "vi-VN";
+                amThanh.rate-0.8;
+
+                let voices = window.speechSynthesis.getVoices();
+            let viVoice = voices.find(v => v.lang === 'vi-VN' || v.name.includes('Vietnamese') || v.name.includes('Google'));
+            if (viVoice) {
+                amThanh.voice = viVoice;
+            }
+             window.speechSynthesis.speak(amThanh);
+     }
+        function docChuDán() {
+                window.speechSynthesis.cancel();
+                let amThanh = new SpeechSynthesisUtterance("Dán");
+                amThanh.lang = "vi-VN";
+                amThanh.rate-0.8;
+
+                let voices = window.speechSynthesis.getVoices();
+            let viVoice = voices.find(v => v.lang === 'vi-VN' || v.name.includes('Vietnamese') || v.name.includes('Google'));
+            if (viVoice) {
+                amThanh.voice = viVoice;
+            }
+             window.speechSynthesis.speak(amThanh);
+     }
         if (typeof speechSynthesis !== 'undefined') {
           speechSynthesis.onvoiceschanged = function() {
             window.speechSynthesis.getVoices();
