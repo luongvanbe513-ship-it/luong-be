@@ -63,7 +63,7 @@
      <div style="display: flex; flex-wrap: nowrap; overflow-x: auto; width: 100vw; margin-left: calc(-50vw + 50%); padding: 10px 20px; box-sizing: border-box; -webkit-overflow-scrolling: touch;">
     <button class="nut-lung-linh" onclick="docChuĐóng()">clos.</button>
     <button class="nut-lung-linh" onclick="docChuThoát()">exit</button>
-    <button class="nut-lung-linh" onclick="docChuXac()">ente</button>
+    <button class="nut-lung-linh" onclick="docChuXác()">ente</button>
     <button class="nut-lung-linh" onclick="docChuDán()">past.</button>
 </div>
 
@@ -136,7 +136,7 @@
      }
         function docChuXác() {
                 window.speechSynthesis.cancel();
-                let amThanh = new SpeechSynthesisUtterance("Xác");
+                let amThanh = new SpeechSynthesisUtterance("Xác định");
                 amThanh.lang = "vi-VN";
                 amThanh.rate-0.8;
 
