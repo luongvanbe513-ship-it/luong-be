@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>máy tính cao cấp</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        .container { width: 100%; margin: 0 auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; font-size: 13px; color: #ff3333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="number"] { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        .btn-xacnhan { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .btn-chotsol { width: 100%; padding: 12px; background-color: #ffc107; color: #333; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
+        .summary-box { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .summary-box p { margin: 5px 0; }
+        .highlight-money { color: red; font-weight: bold; }
+        .history-box { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #007bff; color: white; }
+        .btn-xoa { background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <script>
+        const danhSachDuocPhep = ["123456"];
+        let maNhapVao = prompt("Vui lòng nhập mã cấp phép của ông LƯƠNG VĂN BÉ:");
+        
+        if (!maNhapVao || !danhSachDuocPhep.includes(maNhapVao.trim())) {
+            // Nếu sai hoặc bỏ trống: Xóa sạch trang và hiển thị thông báo khóa
+            document.documentElement.innerHTML = "<h2 style='text-align:center; color:red; margin-top:150px; font-family:Arial;'>Liên hệ với ông LƯƠNG VĂN BÉ</h2>";
+            throw new Error("Khóa");
+        } else {
+            // Nếu đúng mật khẩu: Cho phép hiển thị toàn bộ giao diện máy tính ra
+            document.body.style.display = "block";
+        }
+    </script>
+<div class="container">
+    <h2>MÁY TÍNH CAO CẤP</h2>
+    <div class="subtitle">Độc quyền của ông LƯƠNG VĂN BÉ</div>
+    <div class="form-group">
+        <label>Don gia (VND/kg):</label>
+        <input type="number" id="donGia" value="0">
+    </div>
+    <div class="form-group">
+        <label>Tru bi ngam (kg):</label>
+        <input type="number" id="truBi" value="0">
+    </div>
+    <div class="form-group">
+        <label>Nhap so kg:</label>
+        <input type="number" id="nhapKg" placeholder="Nhap so kg tai day...">
+    </div>
+    <div style="display: flex;gap: 100px;">
+    <button class="btn-xacnhan" onclick="XuLyNhapKg()">Số kg</button>
+    <button class="btn-chotsol" onclick="ThucHienChotSo()">Chốt sổ</button>
+    </div>
+        <p><strong>Luot vua nhap:</strong> Ma <span id="currentCode">0</span> (<span id="currentValue">0</span> kg)</p>
+        <p><strong>Tong so ma luot hop le:</strong> <span id="totalCount">0</span> ma</p>
+        <p><strong>Tong so kg thuc cong don:</strong> <span id="totalValue">0</span> kg</p>
+<p><strong>TONG TIEN:</strong> <span id="totalMoney" class="highlight-money">0 VND</span></p>
+    </div>
+    <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 16px; color: #333;">Lich su tung ma luot nhap:</h3>
+    <div class="history-box">
+        <table>
+            <thead>
+                <tr><th>ma</th><th>kg nhap</th><th>thanh tien</th><th>thao tac</th></tr>
+            </thead>
+            <tbody id="historyTaplebody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+        let danhSachLuot = [];
+        let idCounter = 0;
+    function docThanhTien(t) {
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(t));
+    }
+    function XuLyNhapKg() {
+        let inputKg = document.getElementById("nhapKg").value;
+        let donGia = parseFloat(document.getElementById("donGia").value) || 0;
+        let truBi = parseFloat(document.getElementById("truBi").value) || 0;
+
+        if (inputKg === "" || isNaN(inputKg)) {
+            alert("Vui long nhap so kg!");
+            return;
+        }
+        let kgThuc = parseFloat(inputKg) - truBi;
+        if (kgThuc < 0) kgThuc = 0;
+
+        let thanhTien = kgThuc * donGia;
+        idCounter++;
+        docThanhTien("Mã" + idCounter + ", " + inputKg + " cân");
+        let item = { id: idCounter, kg: kgThuc, tien: thanhTien };
+        danhSachLuot.push(item);
+
+        document.getElementById("currentCode").innerText = item.id;
+        document.getElementById("currentValue").innerText = item.kg;
+        document.getElementById("nhapKg").value = "";
+        CapNhatGiaoDien();
+    }
+
+    function XoaLuot(id) {
+        let item = danhSachLuot.find(x => x.id === id);
+        if (item) {
+            item.daXoa = true;
+        }
+        CapNhatGiaoDien();
+    }
+
+    function CapNhatGiaoDien() {
+        let tbody = document.getElementById("historyTaplebody");
+        tbody.innerHTML = "";
+        let tongKg = 0;
+        let tongTien = 0;
+
+        danhSachLuot.forEach(item => {
+            if (!item.daXoa) {
+            tongKg += item.kg;
+            tongTien += item.tien;
+        }
+        let styleXoa = item.daXoa ? "style='text-decoration: line-through; color: red;'" : "";
+        let ghiChuXoa = item.daXoa ? " (da huy)" : "";
+        let row = `<tr ${styleXoa}><td>Mã ${item.id}${ghiChuXoa}</td><td>${item.kg} kg</td><td>${item.tien.toLocaleString('vi-VN')} VND</td><td><button class="btn-xoa" onclick="XoaLuot(${item.id})">Xóa</button></td></tr>`;
+        tbody.innerHTML += row;
+        });
+
+        document.getElementById("totalCount").innerText = danhSachLuot.length;
+        document.getElementById("totalValue").innerText = tongKg;
+        document.getElementById("totalMoney").innerText = tongTien.toLocaleString('vi-VN') + " VND";
+    }
+
+    function ThucHienChotSo() {
+        let tongTien = 
+        document.getElementById("totalMoney").innerText;
+        alert("Tổng số tiền là: " + tongTien);
+        let msg = new SpeechSynthesisUtterance("Tổng số tiền là " + tongTien);
+        msg.lang = 'vi-VN';
+        window.speechSynthesis.speak(msg);
+    }
+</script>
+</body>
+</html>
+
+
+	
