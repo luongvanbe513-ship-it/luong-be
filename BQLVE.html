@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MÁY TÍNH CAO CẤP</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            margin: 0; 
+            padding: 20px; 
+            display: none; 
+        }
+        .container { 
+            width: 100%; 
+            max-width: 600px;
+            margin: 0 auto; 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+            box-sizing: border-box; 
+        }
+        h2 { text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; font-size: 18px; color: #ff3333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="number"] { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            font-size: 16px; 
+        }
+        .btn-xacnhan { 
+            flex: 1;
+            padding: 12px; 
+            background-color: #28a745; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .btn-chotsol { 
+            flex: 1;
+            padding: 12px; 
+            background-color: #ffc107; 
+            color: #333; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .summary-box { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .summary-box p { margin: 5px 0; }
+        .highlight-money { color: red; font-weight: bold; }
+        .history-box { overflow-x: auto; max-height: 300px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #007bff; color: white; position: sticky; top: 0; }
+        .btn-xoa { 
+            color: white; 
+            border: none; 
+            padding: 6px 12px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold;
+        } 
+    </style>
+</head>
+<body>
+    <script>
+        const danhSachDuocPhep = ["123456"];
+        let maNhapVao = prompt("Vui lòng nhập mã cấp phép của ông LƯƠNG VĂN BÉ:");
+        
+        if (!maNhapVao || !danhSachDuocPhep.includes(maNhapVao.trim())) {
+            // Nếu sai hoặc bỏ trống: Xóa sạch trang và hiển thị thông báo khóa
+            document.documentElement.innerHTML = "<h2 style='text-align:center; color:red; margin-top:150px; font-family:Arial;'>Liên hệ với ông LƯƠNG VĂN BÉ</h2>";
+            throw new Error("Khóa");
+        } else {
+            // Nếu đúng mật khẩu: Cho phép hiển thị toàn bộ giao diện máy tính ra
+            document.body.style.display = "block";
+        }
+    </script>
+    <div class="container">
+        <h2>BỘ NẢO</h2>
+        <div class="subtitle">LƯƠNG VĂN BÉ</div>
+    
+    <div class="form-group">
+        <label>giá</label>
+        <input type="number" id="donGia" value="giá...">
+    </div>
+    <div class="form-group">
+        <label>trừ bì</label>
+        <input type="number" id="truBi" value="trừ bì">
+    </div>
+    <div class="form-group">
+        <label>số kg</label>
+        <input type="number" id="nhapKg" placeholder="số kg...">
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <button class="btn-xacnhan" onclick="XuLyNhapKg()">Số kg</button>
+        <button class="btn-chotsol" onclick="ThucHienChotSo()">Chốt sổ</button>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <button onclick="CapNhatGiaoDien(); alert('Đã lưu dữ liệu thành công!');" style="flex: 1; padding: 12px; background-color: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Lưu Dữ Liệu</button>
+        <button onclick="XoaSachDuLieu()" style="flex: 1; padding: 12px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Xóa Làm Mới</button>
+    </div>
+
+    <div class="summary-box">
+        <p><strong>Lượt vừa nhập:</strong> Mã <span id="currentCode">0</span> (<span id="currentValue">0</span> kg)</p>
+        <p><strong>Tổng số mã lượt hợp lệ:</strong> <span id="totalCount">0</span> mã</p>
+        <p><strong>Tổng số kg thực cộng dồn:</strong> <span id="totalValue">0</span> kg</p>
+        <p><strong>TỔNG TIỀN:</strong> <span id="totalMoney" class="highlight-money">0 VNĐ</span></p>
+    </div>
+
+    <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 16px; color: #333;">Lịch sử từng mã lượt nhập:</h3>
+    <div class="history-box">
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Kg nhập</th>
+                    <th>Thành tiền</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="historyTaplebody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let danhSachLuot = [];
+    let idCounter = 0;
+
+    let savedDonGia = localStorage.getItem("donGiaCaPhe");
+    if (savedDonGia !== null) { document.getElementById("donGia").value = savedDonGia; }
+
+    let savedTruBi = localStorage.getItem("truBiCaPhe");
+    if (savedTruBi !== null) { document.getElementById("truBi").value = savedTruBi; }
+
+    function docThanhTien(t) {
+        let msg = new SpeechSynthesisUtterance(t);
+        msg.lang = 'vi-VN';
+        window.speechSynthesis.speak(msg);
+    }
+
+    function XuLyNhapKg() {
+        let inputKg = document.getElementById("nhapKg").value;
+        let donGia = parseFloat(document.getElementById("donGia").value) || 0;
+        let truBi = parseFloat(document.getElementById("truBi").value) || 0;
+
+        if (inputKg === "" || isNaN(inputKg)) {
+            alert("Vui lòng nhập số kg!");
+            return;
+        }
+        
+        let kgThuc = parseFloat(inputKg) - truBi;
+        if (kgThuc < 0) kgThuc = 0;
+
+        let thanhTien = kgThuc * donGia;
+        idCounter++;
+        
+        let noiDungDoc = "Mã " + idCounter + ", " + inputKg + " cân";
+        docThanhTien(noiDungDoc);
+
+        let item = { id: idCounter, kg: kgThuc, tien: thanhTien, daXoa: false };
+        danhSachLuot.push(item);
+
+        document.getElementById("currentCode").innerText = item.id;
+        document.getElementById("currentValue").innerText = item.kg;
+        document.getElementById("nhapKg").value = "";
+        document.getElementById("nhapKg").focus();
+        
+        CapNhatGiaoDien();
+    }
+
+    function XoaLuot(id) {
+        let item = danhSachLuot.find(x => x.id === id);
+        if (item) {
+            item.daXoa = !item.daXoa; 
+        }
+        CapNhatGiaoDien();
+    }
+
+    function CapNhatGiaoDien() {
+        let tbody = document.getElementById("historyTaplebody");
+        tbody.innerHTML = "";
+        let tongKg = 0;
+        let tongTien = 0;
+        let soMaHopLe = 0;
+
+        danhSachLuot.forEach(item => {
+            if (!item.daXoa) {
+                tongKg += item.kg;
+                tongTien += item.tien;
+                soMaHopLe++;
+            }
+            
+            let styleXoa = item.daXoa ? "style='text-decoration: line-through; color: red;'" : "";
+            let ghiChuXoa = item.daXoa ? " (đã hủy)" : "";
+            let tenNut = item.daXoa ? "Khôi phục" : "Xóa";
+            let mauNut = item.daXoa ? "#ffc107" : "#dc3545"; 
+
+            let row = `<tr ${styleXoa}>
+                <td>Mã ${item.id}${ghiChuXoa}</td>
+                <td>${item.kg} kg</td>
+                <td>${item.tien.toLocaleString('vi-VN')} VNĐ</td>
+                <td><button class="btn-xoa" style="background-color: ${mauNut};" onclick="XoaLuot(${item.id})">${tenNut}</button></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        document.getElementById("totalCount").innerText = soMaHopLe;
+        document.getElementById("totalValue").innerText = tongKg;
+        document.getElementById("totalMoney").innerText = tongTien.toLocaleString('vi-VN') + " VNĐ";
+
+        localStorage.setItem("donGiaCaPhe", document.getElementById("donGia").value);
+        localStorage.setItem("truBiCaPhe", document.getElementById("truBi").value);
+        localStorage.setItem("duLieuCanCaPhe", JSON.stringify(danhSachLuot));
+    }
+
+    function ThucHienChotSo() {
+        let tongTien = document.getElementById("totalMoney").innerText;
+        alert("Tổng số tiền là: " + tongTien);
+        docThanhTien("Tổng số tiền là " + tongTien);
+    }
+
+    function XoaSachDuLieu() {
+        if (confirm("Ông có chắc chắn muốn xóa toàn bộ lịch sử để cân đợt mới không?")) {
+            localStorage.removeItem("duLieuCanCaPhe");
+            danhSachLuot = [];
+            idCounter = 0;
+            document.getElementById("currentCode").innerText = "0";
+            document.getElementById("currentValue").innerText = "0";
+            CapNhatGiaoDien();
+            alert("Đã xóa sạch lịch sử!");
+        }
+    }
+
+    let savedDuLieu = localStorage.getItem("duLieuCanCaPhe");
+    if (savedDuLieu) { 
+        danhSachLuot = JSON.parse(savedDuLieu); 
+        if (danhSachLuot.length > 0) {
+            idCounter = Math.max(...danhSachLuot.map(x => x.id));
+        }
+        CapNhatGiaoDien(); 
+    }
+</script>
+</body>
+</html>
