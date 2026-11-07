@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Máy Tính Trả Góp Đều Hàng Tháng</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        .btn { padding: 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; width: 100%; margin-top: 10px; font-size: 16px; background-color: #007bff; }
+        .btn:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #007bff; padding: 10px; text-align: center; }
+        th { background-color: #007bff; color: white; }
+        .summary { background-color: #e9ecef; padding: 15px; border-radius: 4px; margin-top: 15px; font-weight: bold; color: #28a745; font-size: 16px; line-height: 1.6; }
+        .box-section { border: 1px solid #007bff; padding: 15px; border-radius: 6px; margin-bottom: 15px; background: #fafafa; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>MÁY TÍNH TRẢ GÓP CỐ ĐỊNH HÀNG THÁNG</h2>
+
+    <div class="box-section">
+        <div class="form-group">
+            <label>1. Tổng số tiền nợ ban đầu (VNĐ):</label>
+            <input type="number" id="tongNo" value="0">
+        </div>
+        <div class="form-group">
+            <label>2. Lãi suất theo tháng (%/tháng):</label>
+            <input type="number" id="laiSuat" value="0" step="0">
+        </div>
+        <div class="form-group">
+            <label>3. Số tiền cố định trả hàng tháng (VNĐ):</label>
+            <input type="number" id="tienTraHangThang" value="0">
+        </div>
+        <button class="btn" onclick="tinhLichTraNo()">Tính Toàn Bộ Lịch Trả Nợ</button>
+    </div>
+
+    <div class="summary" id="thongKe">
+        Nhập thông tin và bấm nút để xem kết quả tính toán.
+    </div>
+
+    <table id="bangLichTra">
+        <thead>
+            <tr>
+                <th>Kỳ (Tháng)</th>
+                <th>Dư Nợ Đầu Kỳ</th>
+                <th>Tổng Tiền Đóng</th>
+                <th>Tiền Lãi Tháng Đó</th>
+                <th>Tiền Gốc Trừ Nợ</th>
+                <th>Dư Nợ Còn Lại</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function tinhLichTraNo() {
+        let tongNo = parseFloat(document.getElementById('tongNo').value) || 0;
+        let laiSuatPhanTram = parseFloat(document.getElementById('laiSuat').value) || 0;
+        let tienTraHangThang = parseFloat(document.getElementById('tienTraHangThang').value) || 0;
+
+        let laiSuat = laiSuatPhanTram / 100;
+        let tbody = document.querySelector('#bangLichTra tbody');
+        tbody.innerHTML = '';
+
+        if (tongNo <= 0 || tienTraHangThang <= 0) {
+            alert("Vui lòng nhập đầy đủ Tổng số tiền nợ và Số tiền trả hàng tháng lớn hơn 0!");
+            return;
+        }
+
+        // Kiểm tra nếu tiền đóng ít hơn hoặc bằng tiền lãi tháng đầu thì nợ không bao giờ hết
+        let laiThangDau = tongNo * laiSuat;
+        if (tienTraHangThang <= laiThangDau) {
+            alert("Số tiền trả hàng tháng (" + tienTraHangThang.toLocaleString('vi-VN') + " đ) phải lớn hơn tiền lãi tháng đầu tiên (" + Math.round(laiThangDau).toLocaleString('vi-VN') + " đ) thì mới trừ hết nợ được!");
+            return;
+        }
+
+        let duNo = tongNo;
+        let tongLaiPhaiTra = 0;
+        let ky = 1;
+
+        while (duNo > 0) {
+            let laiTra = duNo * laiSuat;
+            let tongTienDong = tienTraHangThang;
+            let gocTra = tongTienDong - laiTra;
+
+            // Nếu số dư nợ còn lại ít hơn tiền gốc dự định trả
+            if (duNo + laiTra <= tienTraHangThang) {
+                tongTienDong = duNo + laiTra;
+                gocTra = duNo;
+                duNoCuoi = 0;
+            } else {
+                duNoCuoi = duNo - gocTra;
+            }
+
+            tongLaiPhaiTra += laiTra;
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>Kỳ ${ky}</td>
+                <td>${Math.round(duNo).toLocaleString('vi-VN')} đ</td>
+                <td><b>${Math.round(tongTienDong).toLocaleString('vi-VN')} đ</b></td>
+                <td>${Math.round(laiTra).toLocaleString('vi-VN')} đ</td>
+                <td>${Math.round(gocTra).toLocaleString('vi-VN')} đ</td>
+                <td><b>${Math.round(duNoCuoi).toLocaleString('vi-VN')} đ</b></td>
+            `;
+            tbody.appendChild(tr);
+
+            duNo = duNoCuoi;
+            ky++;
+
+            // Tránh vòng lặp vô tận
+            if (ky > 300) break;
+        }
+
+        document.getElementById('thongKe').innerHTML = 
+            `Tổng nợ ban đầu: <b>${tongNo.toLocaleString('vi-VN')} đ</b><br>` +
+            `Số tháng phải trả: <b>${ky - 1} tháng</b><br>` +
+            `Tổng số tiền lãi phải trả: <b>${Math.round(tongLaiPhaiTra).toLocaleString('vi-VN')} đ</b>`;
+    }
+</script>
+
+</body>
+</html>
