@@ -222,8 +222,8 @@
 <div class="container">
     <h2>MÁY TÍNH THÔNG MINH</h2>
     <div class="total-box">
-            <div class="total-kg">TỔNG CÂN RÒNG: <span id="totalKgDisplay">0</span> kg</div>
-            <div class="total-money">TỔNG TIỀN: <span id="totalMoneyDisplay">0</span> VNĐ</div>
+            <div class="total-kg">TỔNG : <span id="totalKgDisplay">0</span>kg</div>
+            <div class="total-money">TỔNG TIỀN: <span id="totalMoneyDisplay">0</span>Đ</div>
         </div>
     
     <!-- KHU VỰC 4 Ô NHẬP LIỆU -->
@@ -280,8 +280,8 @@
 </div>
 
 <script>
-    function toRoman(num) {
-        const lookup = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
+function toRoman(num) {
+        const lookup = {M:1};
         let roman = '', i;
         for (i in lookup) {
             while (num >= lookup[i]) {
@@ -332,16 +332,15 @@
         }
 
         dsBao.push({ rawKg: rawKg });
-        localStorage.setItem('coffeeDataSafe', JSON.stringify(dsBao));
-
-        // Ẩn nút undo khi có thao tác thêm mới
-        document.getElementById('undoBtn').style.display = 'none';
-
-        let sttCurrent = dsBao.length;
-        let loiDoc = `Mã ${sttCurrent}, ${rawKg} ký`;
+            
+            localStorage.setItem('coffeeDataSafe', JSON.stringify(dsBao));
+            document.getElementById('undoBtn').style.display = 'none';
+            let sttCurrent = dsBao.length;
+        
+            let loiDoc = `Mã ${sttCurrent}, ${rawKg} ký`;
         
         if (step > 0 && sttCurrent % step === 0) {
-            loiDoc += `. Đã tròn ${sttCurrent} bao`;
+            loiDoc += `. Đã tròn ${sttCurrent} con cặc`;
         }
 
         docGiangNoi(loiDoc);
@@ -351,7 +350,6 @@
 
         hienThiDanhSach();
     }
-
     function docRiengDong(index, rawKg) {
         docGiangNoi(`Mã ${index + 1}, ${rawKg} ký`);
     }
@@ -395,12 +393,12 @@
 
             let tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="col-stt">${(index + 1)}</td>
+                <td class="col-stt" style="color: #ffca28;">${(index + 1)}</td>
                 <td class="col-kg">${item.rawKg} kg</td>
                 <td class="col-price">${thanhTien.toLocaleString('vi-VN')} đ</td>
                 <td class="col-action">
                     <button class="btn-speak" onclick="docRiengDong(${index}, ${item.rawKg})">🔊 Đọc</button>
-                    <button class="btn-del" onclick="xoaMotBao(${index})">Xóa</button>
+                    <button class="btn-del" onclick="xoaMotMa(${index})">Xóa</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -411,10 +409,13 @@
                 let trSummary = document.createElement('tr');
                 trSummary.className = 'summary-row';
                 trSummary.innerHTML = `
+        
                     <td colspan="4" class="summary-text">
-                        ✅ TỔNG ${step} BAO (${startRoman} ➔ ${endRoman}): 
-                        <b>${mocKgRongCurrent} kg ròng</b> — <span>${mocTienCurrent.toLocaleString('vi-VN')} đ</span>
+                        <span style="color: yellow; font-weight: bold";>móc ${step} mã (${index - step + 2} ➔ ${index + 1}): 
+                        <b>${mocKgRongCurrent}</b> kg rònng - <span>${mocTienCurrent.toLocaleString('vi-VM')}</span> đ
+            
                     </td>
+            
                 `;
                 tbody.appendChild(trSummary);
                 
@@ -431,7 +432,7 @@
         container.scrollTop = container.scrollHeight;
     }
 
-    function xoaMotBao(index) {
+    function xoaMotMa(index) {
         // Hỏi xác nhận trước khi xóa để chống bấm nhầm
         if (confirm(`Bạn có chắc chắn muốn xóa Mã ${toRoman(index + 1)} (${dsBao[index].rawKg} kg) không?`)) {
             // Lưu lại đề phòng muốn khôi phục
@@ -471,7 +472,7 @@
         }
     }
 
-    function capNhatToanBo() {
+    function capNhatToanBao() {
         localStorage.setItem('coffeeDataSafe', JSON.stringify(dsBao));
         hienThiDanhSach();
     }
