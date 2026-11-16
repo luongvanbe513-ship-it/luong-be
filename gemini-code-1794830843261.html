@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Khách Hàng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #1e293b;
+        }
+        h1 {
+            text-align: center;
+            color: #0f172a;
+        }
+        .form-them {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 16px;
+            width: 240px;
+        }
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-them {
+            background-color: #0284c7;
+            color: white;
+        }
+        .btn-them:hover {
+            background-color: #0369a1;
+        }
+        .bang-crm {
+            display: flex;
+            justify-content: center;
+        }
+        .cot {
+            background-color: #ffffff;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 550px;
+            min-height: 420px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .cot h2 {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 18px;
+            color: #0284c7;
+        }
+        .the-khach {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .ten-khach {
+            font-weight: bold;
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+        .ghi-chu {
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+        .nhom-nut {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .btn-nho {
+            padding: 6px 12px;
+            font-size: 13px;
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+        .btn-nho:hover {
+            background-color: #cbd5e1;
+        }
+        .btn-sua {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+        .btn-sua:hover {
+            background-color: #fde68a;
+        }
+        .btn-xoa {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .btn-xoa:hover {
+            background-color: #fecaca;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Rõ từng khách</h1>
+
+    <div class="form-them">
+        <input type="text" id="nhapTen" placeholder="quản lý khách hàng">
+        <input type="text" id="nhapGhiChu" placeholder="Ghi chú (SĐT, nhu cầu...)">
+        <button class="btn-them" onclick="themKhach()">+ Thêm khách</button>
+    </div>
+
+    <div class="bang-crm">
+        <div class="cot">
+            <h2>Danh sách khách hàng</h2>
+            <div id="danhSach-khach"></div>
+        </div>
+    </div>
+
+    <script>
+        let danhSachKhach = JSON.parse(localStorage.getItem('duLieuKhachHang')) || [
+            { id: 1, ten: 'lê văn câu 16/11/2026 v 5t', ghiChu: 'Chưa có ghi chú' }
+        ];
+
+        function luuVaHienThi() {
+            localStorage.setItem('duLieuKhachHang', JSON.stringify(danhSachKhach));
+            
+            let khungDanhSach = document.getElementById('danhSach-khach');
+            khungDanhSach.innerHTML = '';
+
+            danhSachKhach.forEach(function(khach) {
+                let theHTML = `
+                    <div class="the-khach">
+                        <div class="ten-khach">👤 ${khach.ten}</div>
+                        <div class="ghi-chu">${khach.ghiChu}</div>
+                        <div class="nhom-nut">
+                            <button class="btn-nho btn-sua" onclick="suaKhach(${khach.id})">Sửa</button>
+                            <button class="btn-nho btn-xoa" onclick="xoaKhach(${khach.id})">Xóa</button>
+                        </div>
+                    </div>
+                `;
+
+                khungDanhSach.innerHTML += theHTML;
+            });
+        }
+
+        function themKhach() {
+            let ten = document.getElementById('nhapTen').value.trim();
+            let ghiChu = document.getElementById('nhapGhiChu').value.trim();
+
+            if (ten === '') {
+                alert('Vui lòng nhập tên khách hàng!');
+                return;
+            }
+
+            let khachMoi = {
+                id: Date.now(),
+                ten: ten,
+                ghiChu: ghiChu || 'Chưa có ghi chú'
+            };
+
+            danhSachKhach.push(khachMoi);
+            document.getElementById('nhapTen').value = '';
+            document.getElementById('nhapGhiChu').value = '';
+            luuVaHienThi();
+        }
+
+        function suaKhach(id) {
+            let khach = danhSachKhach.find(k => k.id === id);
+            if (khach) {
+                let tenMoi = prompt('Sửa thông tin & số tiền:', khach.ten);
+                if (tenMoi !== null && tenMoi.trim() !== '') {
+                    khach.ten = tenMoi.trim();
+                }
+
+                let ghiChuMoi = prompt('Sửa ghi chú (nếu không đổi thì bấm OK):', khach.ghiChu);
+                if (ghiChuMoi !== null && ghiChuMoi.trim() !== '') {
+                    khach.ghiChu = ghiChuMoi.trim();
+                }
+
+                luuVaHienThi();
+            }
+        }
+
+        function xoaKhach(id) {
+            if (confirm('Bạn có chắc muốn xóa khách này?')) {
+                danhSachKhach = danhSachKhach.filter(k => k.id !== id);
+                luuVaHienThi();
+            }
+        }
+
+        luuVaHienThi();
+    </script>
+
+</body>
+</html>
