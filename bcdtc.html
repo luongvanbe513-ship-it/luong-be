@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Cân Đối Lũy Kế Thu Chi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .legend {
+            margin-bottom: 20px;
+            font-size: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .legend span {
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+        .badge-green { background-color: #d4edda; color: #155724; }
+        .badge-red { background-color: #f8d7da; color: #721c24; }
+        .badge-yellow { background-color: #fff3cd; color: #856404; }
+
+        table {
+            width: 100%;
+            max-width: 1050px;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            font-size: 16px;
+        }
+        th {
+            font-size: 17px;
+            font-weight: bold;
+        }
+        /* Màu tiêu đề các cột */
+        .col-stt-header {
+            background-color: #6c757d;
+            color: white;
+            width: 60px;
+        }
+        .col-thu-header {
+            background-color: #28a745;
+            color: white;
+        }
+        .col-chi-header {
+            background-color: #dc3545;
+            color: white;
+        }
+        .col-kq-header {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .col-action-header {
+            background-color: #343a40;
+            color: white;
+            width: 160px;
+        }
+
+        /* Ô nhập liệu */
+        input[type="number"] {
+            width: 95%;
+            padding: 8px;
+            font-size: 16px;
+            text-align: right;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="number"]:disabled {
+            background-color: #e9ecef;
+            border-color: transparent;
+            cursor: not-allowed;
+        }
+        .input-thu {
+            color: #155724;
+            font-weight: bold;
+            background-color: #f0fff4;
+        }
+        .input-chi {
+            color: #721c24;
+            font-weight: bold;
+            background-color: #fff5f5;
+        }
+
+        /* Màu kết quả lũy kế ở cột thứ 3 */
+        .res-duong {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+            font-weight: bold;
+        }
+        .res-am {
+            background-color: #f8d7da !important;
+            color: #721c24 !important;
+            font-weight: bold;
+        }
+        .res-bang {
+            background-color: #fff3cd !important;
+            color: #856404 !important;
+            font-weight: bold;
+        }
+
+        /* Nút bấm thao tác trên từng dòng */
+        .btn-action {
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 2px;
+            color: white;
+        }
+        .btn-edit { background-color: #fd7e14; }
+        .btn-edit:hover { background-color: #e36a09; }
+        .btn-save { background-color: #28a745; }
+        .btn-save:hover { background-color: #218838; }
+        .btn-delete { background-color: #dc3545; }
+        .btn-delete:hover { background-color: #c82333; }
+
+        /* Khu vực nút điều khiển phía dưới */
+        .bottom-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+        }
+        .btn-add {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-add:hover { background-color: #0056b3; }
+        .btn-clear-all {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-clear-all:hover { background-color: #5a6268; }
+        .status-save {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>BẢNG CÂN ĐỐI THU - CHI CỘNG DỒN</h2>
+
+    <div class="legend">
+        <span class="badge-green">Màu Xanh: Số Dư Dương (+)</span>
+        <span class="badge-red">Màu Đỏ: Số Dư Âm (-)</span>
+        <span class="badge-yellow">Màu Vàng: Cân Bằng (= 0)</span>
+    </div>
+
+    <table id="balanceTable">
+        <thead>
+            <tr>
+                <th class="col-stt-header">STT</th>
+                <th class="col-thu-header">Cột 1: THU (Xanh)</th>
+                <th class="col-chi-header">Cột 2: CHI (Đỏ)</th>
+                <th class="col-kq-header">Cột 3: CÂN ĐỐI LŨY KẾ & GHI CHÚ</th>
+                <th class="col-action-header">Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dữ liệu sẽ được tự động tải từ bộ nhớ trình duyệt -->
+        </tbody>
+    </table>
+
+    <div class="bottom-controls">
+        <button class="btn-add" onclick="themDong()">+ Thêm dòng mới</button>
+        <button class="btn-clear-all" onclick="xoaTatCa()">Xóa tất cả bảng</button>
+    </div>
+
+    <div class="status-save" id="statusSave">✓ Dữ liệu tự động lưu vào bộ nhớ máy tính</div>
+
+    <script>
+        const STORAGE_KEY = 'bang_can_doi_thu_chi_v1';
+
+        function formatSo(num) {
+            return num.toLocaleString('vi-VN');
+        }
+
+        // Lưu toàn bộ trạng thái bảng vào bộ nhớ trình duyệt
+        function luuDuLieu() {
+            const rows = document.querySelectorAll('#balanceTable tbody tr');
+            const data = [];
+
+            rows.forEach(row => {
+                const inputThu = row.querySelector('.input-thu');
+                const inputChi = row.querySelector('.input-chi');
+                data.push({
+                    thu: inputThu.value,
+                    chi: inputChi.value,
+                    locked: inputThu.disabled
+                });
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            
+            const status = document.getElementById('statusSave');
+            status.textContent = "✓ Đã tự động lưu thay đổi!";
+            setTimeout(() => {
+                status.textContent = "✓ Dữ liệu tự động lưu vào bộ nhớ máy tính";
+            }, 1500);
+        }
+
+        // Tạo một phần tử dòng HTML
+        function taoPhanTuDong(thuVal = '', chiVal = '', isLocked = false) {
+            const tr = document.createElement('tr');
+            const disabledAttr = isLocked ? 'disabled' : '';
+            const btnClass = isLocked ? 'btn-edit' : 'btn-save';
+            const btnText = isLocked ? 'Sửa' : 'Lưu';
+
+            tr.innerHTML = `
+                <td class="stt">1</td>
+                <td><input type="number" class="input-thu" value="${thuVal}" placeholder="Nhập thu..." ${disabledAttr} oninput="capNhatVaLuu()"></td>
+                <td><input type="number" class="input-chi" value="${chiVal}" placeholder="Nhập chi..." ${disabledAttr} oninput="capNhatVaLuu()"></td>
+                <td class="ket-qua res-bang">0 (Cân bằng)</td>
+                <td>
+                    <button class="btn-action ${btnClass}" onclick="suaLuuDong(this)">${btnText}</button>
+                    <button class="btn-action btn-delete" onclick="xoaDong(this)">Xóa</button>
+                </td>
+            `;
+            return tr;
+        }
+
+        // Tải dữ liệu từ bộ nhớ khi mở trang
+        function taiDuLieu() {
+            const tbody = document.querySelector('#balanceTable tbody');
+            tbody.innerHTML = '';
+            const savedData = localStorage.getItem(STORAGE_KEY);
+
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                if (parsedData.length > 0) {
+                    parsedData.forEach(item => {
+                        tbody.appendChild(taoPhanTuDong(item.thu, item.chi, item.locked));
+                    });
+                    capNhatTatCa();
+                    return;
+                }
+            }
+
+            // Nếu mở lần đầu chưa có dữ liệu thì tạo sẵn 3 ví dụ mẫu + 1 dòng trống
+            tbody.appendChild(taoPhanTuDong('50000', '50000', true));
+            tbody.appendChild(taoPhanTuDong('50000', '30000', true));
+            tbody.appendChild(taoPhanTuDong('0', '40000', true));
+            tbody.appendChild(taoPhanTuDong('', '', false));
+            capNhatTatCa();
+            luuDuLieu();
+        }
+
+        // Hàm tính toán lũy kế từ trên xuống dưới
+        function capNhatTatCa() {
+            const rows = document.querySelectorAll('#balanceTable tbody tr');
+            let soDuTruocDo = 0;
+
+            rows.forEach((row, index) => {
+                row.querySelector('.stt').textContent = index + 1;
+
+                const thu = parseFloat(row.querySelector('.input-thu').value) || 0;
+                const chi = parseFloat(row.querySelector('.input-chi').value) || 0;
+                const oKetQua = row.querySelector('.ket-qua');
+
+                if (index === 0) {
+                    soDuTruocDo = thu - chi;
+                } else {
+                    soDuTruocDo = soDuTruocDo + thu - chi;
+                }
+
+                oKetQua.classList.remove('res-duong', 'res-am', 'res-bang');
+
+                if (soDuTruocDo > 0) {
+                    oKetQua.classList.add('res-duong');
+                    oKetQua.textContent = "+" + formatSo(soDuTruocDo) + " (Dương)";
+                } else if (soDuTruocDo < 0) {
+                    oKetQua.classList.add('res-am');
+                    oKetQua.textContent = formatSo(soDuTruocDo) + " (Âm)";
+                } else {
+                    oKetQua.classList.add('res-bang');
+                    oKetQua.textContent = "0 (Cân bằng)";
+                }
+            });
+        }
+
+        function capNhatVaLuu() {
+            capNhatTatCa();
+            luuDuLieu();
+        }
+
+        // Chức năng Sửa / Lưu từng dòng
+        function suaLuuDong(button) {
+            const row = button.parentElement.parentElement;
+            const inputThu = row.querySelector('.input-thu');
+            const inputChi = row.querySelector('.input-chi');
+
+            if (inputThu.disabled) {
+                inputThu.disabled = false;
+                inputChi.disabled = false;
+                inputThu.focus();
+                button.textContent = "Lưu";
+                button.classList.remove('btn-edit');
+                button.classList.add('btn-save');
+            } else {
+                inputThu.disabled = true;
+                inputChi.disabled = true;
+                button.textContent = "Sửa";
+                button.classList.remove('btn-save');
+                button.classList.add('btn-edit');
+            }
+            capNhatVaLuu();
+        }
+
+        // Chức năng Xóa từng dòng
+        function xoaDong(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+            capNhatVaLuu();
+        }
+
+        // Chức năng Thêm dòng mới
+        function themDong() {
+            const tbody = document.querySelector('#balanceTable tbody');
+            const tr = taoPhanTuDong('', '', false);
+            tbody.appendChild(tr);
+            tr.querySelector('.input-thu').focus();
+            capNhatVaLuu();
+        }
+
+        // Chức năng Xóa toàn bộ
+        function xoaTatCa() {
+            if (confirm("Bạn có chắc chắn muốn xóa toàn bộ các dòng trong bảng không?")) {
+                const tbody = document.querySelector('#balanceTable tbody');
+                tbody.innerHTML = '';
+                themDong();
+            }
+        }
+
+        window.onload = taiDuLieu;
+    </script>
+
+</body>
+</html>
