@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Cân Đối Lũy Kế Thu Chi</title>
+    <title>Bảng Cân Đối </title>
     <style>
-        body {
+        * {
+            box-sizing:border-box;
             font-family: Arial, sans-serif;
+        }
+        body {
+            
             background-color: #f4f6f9;
             padding: 20px;
             display: flex;
@@ -27,11 +31,14 @@
             background: #fff;
             padding: 10px 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.9);
+        }
+        input {
+            text-align:center;
         }
         .legend span {
             font-weight: bold;
-            padding: 4px 10px;
+            text-indent: 8px;
             border-radius: 4px;
         }
         .badge-green { background-color: #d4edda; color: #155724; }
@@ -40,10 +47,10 @@
 
         table {
             width: 100%;
-            max-width: 1050px;
+            max-width: 600px;
             border-collapse: collapse;
             background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.9);
             border-radius: 8px;
             overflow: hidden;
         }
@@ -83,7 +90,7 @@
 
         /* Ô nhập liệu */
         input[type="number"] {
-            width: 95%;
+            width: 100%;
             padding: 8px;
             font-size: 16px;
             text-align: right;
@@ -180,22 +187,16 @@
 </head>
 <body>
 
-    <h2>BẢNG CÂN ĐỐI THU - CHI CỘNG DỒN</h2>
-
-    <div class="legend">
-        <span class="badge-green">Màu Xanh: Số Dư Dương (+)</span>
-        <span class="badge-red">Màu Đỏ: Số Dư Âm (-)</span>
-        <span class="badge-yellow">Màu Vàng: Cân Bằng (= 0)</span>
-    </div>
+    <h2>BẢNG CÂN ĐỐI</h2>
 
     <table id="balanceTable">
         <thead>
             <tr>
-                <th class="col-stt-header">STT</th>
-                <th class="col-thu-header">Cột 1: THU (Xanh)</th>
-                <th class="col-chi-header">Cột 2: CHI (Đỏ)</th>
-                <th class="col-kq-header">Cột 3: CÂN ĐỐI LŨY KẾ & GHI CHÚ</th>
-                <th class="col-action-header">Thao Tác</th>
+                <th class="col-stt-header">S</th>
+                <th class="col-thu-header">Thu</th>
+                <th class="col-chi-header">Chi</th>
+                <th class="col-kq-header">=</th>
+                <th class="col-action-header">Tác</th>
             </tr>
         </thead>
         <tbody>
@@ -204,8 +205,8 @@
     </table>
 
     <div class="bottom-controls">
-        <button class="btn-add" onclick="themDong()">+ Thêm dòng mới</button>
-        <button class="btn-clear-all" onclick="xoaTatCa()">Xóa tất cả bảng</button>
+        <button class="btn-add" onclick="themDong()">+ Thêm</button>
+        <button class="btn-clear-all" onclick="xoaTatCa()">Xóa</button>
     </div>
 
     <div class="status-save" id="statusSave">✓ Dữ liệu tự động lưu vào bộ nhớ máy tính</div>
@@ -250,9 +251,9 @@
 
             tr.innerHTML = `
                 <td class="stt">1</td>
-                <td><input type="number" class="input-thu" value="${thuVal}" placeholder="Nhập thu..." ${disabledAttr} oninput="capNhatVaLuu()"></td>
-                <td><input type="number" class="input-chi" value="${chiVal}" placeholder="Nhập chi..." ${disabledAttr} oninput="capNhatVaLuu()"></td>
-                <td class="ket-qua res-bang">0 (Cân bằng)</td>
+                <td><input type="number" class="input-thu" value="${thuVal}" placeholder="0" ${disabledAttr} oninput="capNhatVaLuu()"></td>
+                <td><input type="number" class="input-chi" value="${chiVal}" placeholder="0" ${disabledAttr} oninput="capNhatVaLuu()"></td>
+                <td class="ket-qua res-bang">0</td>
                 <td>
                     <button class="btn-action ${btnClass}" onclick="suaLuuDong(this)">${btnText}</button>
                     <button class="btn-action btn-delete" onclick="xoaDong(this)">Xóa</button>
@@ -279,10 +280,7 @@
             }
 
             // Nếu mở lần đầu chưa có dữ liệu thì tạo sẵn 3 ví dụ mẫu + 1 dòng trống
-            tbody.appendChild(taoPhanTuDong('50000', '50000', true));
-            tbody.appendChild(taoPhanTuDong('50000', '30000', true));
-            tbody.appendChild(taoPhanTuDong('0', '40000', true));
-            tbody.appendChild(taoPhanTuDong('', '', false));
+            tbody.appendChild(taoPhanTuDong('0', '0', true));
             capNhatTatCa();
             luuDuLieu();
         }
@@ -309,13 +307,13 @@
 
                 if (soDuTruocDo > 0) {
                     oKetQua.classList.add('res-duong');
-                    oKetQua.textContent = "+" + formatSo(soDuTruocDo) + " (Dương)";
+                    oKetQua.textContent = "+" + formatSo(soDuTruocDo) + " d";
                 } else if (soDuTruocDo < 0) {
                     oKetQua.classList.add('res-am');
-                    oKetQua.textContent = formatSo(soDuTruocDo) + " (Âm)";
+                    oKetQua.textContent = formatSo(soDuTruocDo) + " a";
                 } else {
                     oKetQua.classList.add('res-bang');
-                    oKetQua.textContent = "0 (Cân bằng)";
+                    oKetQua.textContent = "0";
                 }
             });
         }
