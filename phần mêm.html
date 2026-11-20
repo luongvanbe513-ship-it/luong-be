@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phần Mềm Quản Lý Đơn Hàng & Bán Hàng Đa Năng</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            padding: 15px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Thanh tiêu đề trên cùng */
+        .top-bar {
+            background: linear-gradient(135deg, #0056b3, #007bff);
+            color: #ffffff;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 86, 179, 0.2);
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .top-bar span {
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* Khu vực phiếu đơn hàng chính */
+        .invoice-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            border: 1px solid #e1e4e8;
+        }
+
+        /* Phần đầu phiếu giống mẫu quảng cáo */
+        .invoice-meta-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #d0d7de;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .order-time {
+            font-size: 14px;
+            color: #57606a;
+            font-weight: 600;
+        }
+
+        .order-code-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .order-code {
+            font-size: 22px;
+            font-weight: 800;
+            color: #111827;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-status {
+            background-color: #e6f0ff;
+            color: #0056b3;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid #b3d1ff;
+        }
+
+        /* Thông tin cửa hàng & khách hàng */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 650px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-box label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .info-box input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 8px;
+            background: #ffffff;
+        }
+
+        .info-box input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        /* Khu vực thêm mặt hàng mới */
+        .add-item-box {
+            background-color: #eef6ff;
+            border: 1px solid #bfdbfe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .add-item-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1.1fr 2.2fr 1fr 1fr 1.3fr auto;
+            gap: 8px;
+            align-items: end;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .form-row .full-mobile {
+                grid-column: span 2;
+            }
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 3px;
+        }
+
+        .field-group input {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #ffffff;
+        }
+
+        .field-group input:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.15);
+        }
+
+        .btn {
+            padding: 9px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background-color: #0056b3;
+            color: #ffffff;
+            height: 38px;
+        }
+
+        .btn-primary:hover {
+            background-color: #004494;
+        }
+
+        /* Bảng danh sách hàng hóa trong đơn */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 550px;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .item-code {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .item-sub {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .amount-cell {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 15px;
+        }
+
+        .btn-del-row {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 5px 9px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .btn-del-row:hover {
+            background: #fecaca;
+        }
+
+        /* Khu vực tổng cộng tiền */
+        .summary-section {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 360px;
+            font-size: 15px;
+        }
+
+        .summary-row input {
+            width: 140px;
+            padding: 5px 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .total-final {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0056b3;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+
+        /* Hàng nút chức năng dưới phiếu */
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-success {
+            background-color: #16a34a;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #15803d;
+        }
+
+        .btn-voice {
+            background-color: #7c3aed;
+            color: white;
+        }
+        .btn-voice:hover {
+            background-color: #6d28d9;
+        }
+
+        .btn-print {
+            background-color: #0284c7;
+            color: white;
+        }
+        .btn-print:hover {
+            background-color: #0369a1;
+        }
+
+        .btn-reset {
+            background-color: #64748b;
+            color: white;
+        }
+        .btn-reset:hover {
+            background-color: #475569;
+        }
+
+        /* Danh sách lịch sử đơn hàng đã lưu */
+        .history-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e1e4e8;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .history-header h2 {
+            font-size: 17px;
+            color: #1e293b;
+        }
+
+        .search-input {
+            padding: 7px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 240px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #f8fafc;
+        }
+
+        .history-item:hover {
+            border-color: #93c5fd;
+            background: #f0f7ff;
+        }
+
+        .history-info strong {
+            color: #0056b3;
+            font-size: 15px;
+        }
+
+        .history-info p {
+            font-size: 13px;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        .history-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-total {
+            font-weight: 800;
+            color: #16a34a;
+            font-size: 15px;
+            margin-right: 8px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-view {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .btn-remove {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* Định dạng khi bấm In phiếu */
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .top-bar, .add-item-box, .action-bar, .history-card, .col-action {
+                display: none !important;
+            }
+            .invoice-card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+            .info-box input, .summary-row input {
+                border: none;
+                background: transparent;
+                padding: 2px 0;
+                font-weight: 600;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Thanh tiêu đề -->
+    <div class="top-bar">
+        <h1>Phần Mềm Quản Lý Đơn Hàng</h1>
+        <span>Dùng ngoại tuyến · Lưu tự động trên máy</span>
+    </div>
+
+    <!-- Phiếu đơn đặt hàng chính -->
+    <div class="invoice-card">
+        <div class="invoice-meta-top">
+            <div class="order-time" id="displayTime">Đơn đặt hàng · --/--/---- --:--</div>
+            <div style="font-size: 13px; color: #0056b3; font-weight: 600;" id="storeHeaderPreview">CỬA HÀNG CỦA BẠN</div>
+        </div>
+
+        <div class="order-code-row">
+            <div class="order-code" id="displayOrderCode">DH-2611-0001</div>
+            <div class="badge-status" id="displayOrderBadge">SỐ 1 · HĐ</div>
+        </div>
+
+        <!-- Thông tin cửa hàng & khách hàng (Tự điền sau) -->
+        <div class="info-grid">
+            <div class="info-box">
+                <label>Thông tin bên bán (Tự lưu cố định)</label>
+                <input type="text" id="shopName" placeholder="Nhập tên cửa hàng / cơ sở của bạn..." oninput="saveShopInfo()">
+                <input type="text" id="shopPhone" placeholder="Số điện thoại & Địa chỉ cửa hàng..." oninput="saveShopInfo()">
+            </div>
+            <div class="info-box">
+                <label>Thông tin khách hàng (Điền theo từng đơn)</label>
+                <input type="text" id="customerName" placeholder="Tên khách hàng (hoặc để trống nếu khách lẻ)">
+                <input type="text" id="customerNote" placeholder="Số điện thoại / Địa chỉ giao / Ghi chú đơn...">
+            </div>
+        </div>
+
+        <!-- Khung nhập mặt hàng -->
+        <div class="add-item-box">
+            <div class="add-item-title">+ Thêm mặt hàng vào đơn (Gõ thông tin hàng hóa bạn muốn bán)</div>
+            <div class="form-row">
+                <div class="field-group">
+                    <label>Mã hàng (Tùy chọn)</label>
+                    <input type="text" id="itemCode" placeholder="VD: SP-01">
+                </div>
+                <div class="field-group full-mobile">
+                    <label>Tên hàng hóa / Sản phẩm *</label>
+                    <input type="text" id="itemName" placeholder="VD: Cà phê nhân / Xi măng / Phân bón...">
+                </div>
+                <div class="field-group">
+                    <label>Đơn vị tính</label>
+                    <input type="text" id="itemUnit" placeholder="VD: bao, kg, cái">
+                </div>
+                <div class="field-group">
+                    <label>Số lượng *</label>
+                    <input type="number" id="itemQty" placeholder="0" step="any" min="0">
+                </div>
+                <div class="field-group">
+                    <label>Đơn giá (VNĐ) *</label>
+                    <input type="number" id="itemPrice" placeholder="0" step="any" min="0" onkeydown="if(event.key==='Enter') addItem()">
+                </div>
+                <div class="field-group full-mobile">
+                    <button class="btn btn-primary" style="width: 100%;" onclick="addItem()">Thêm vào đơn</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng chi tiết mặt hàng -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 16%;">Mã</th>
+                        <th style="width: 34%;">Tên mặt hàng & Quy cách</th>
+                        <th class="text-right" style="width: 15%;">Số lượng</th>
+                        <th class="text-right" style="width: 15%;">Đơn giá</th>
+                        <th class="text-right" style="width: 15%;">Thành tiền</th>
+                        <th class="col-action text-right" style="width: 5%;">Xóa</th>
+                    </tr>
+                </thead>
+                <tbody id="orderItemsBody">
+                    <!-- Dữ liệu hàng hóa sẽ hiển thị tại đây -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tổng kết tiền -->
+        <div class="summary-section">
+            <div class="summary-row">
+                <span>Tổng tiền hàng:</span>
+                <strong id="subTotalDisplay">0 đ</strong>
+            </div>
+            <div class="summary-row">
+                <span>Khách đã trả trước (đ):</span>
+                <input type="number" id="paidAmount" value="0" min="0" oninput="renderItems()">
+            </div>
+            <div class="summary-row">
+                <span>Còn lại / Công nợ:</span>
+                <strong id="debtDisplay" style="color: #dc2626;">0 đ</strong>
+            </div>
+            <div class="summary-row total-final">
+                <span>TỔNG CỘNG:</span>
+                <span id="grandTotalDisplay">0 đ</span>
+            </div>
+        </div>
+
+        <!-- Các nút thao tác -->
+        <div class="action-bar">
+            <button class="btn btn-success" onclick="saveOrder()">Lưu Đơn Hàng</button>
+            <button class="btn btn-voice" onclick="readTotalVoice()">Đọc Tổng Tiền</button>
+            <button class="btn btn-print" onclick="window.print()">In Phiếu / Xuất PDF</button>
+            <button class="btn btn-reset" onclick="createNewOrder()">Tạo Đơn Mới</button>
+        </div>
+    </div>
+
+    <!-- Khu vực Lịch sử đơn hàng đã lưu -->
+    <div class="history-card">
+        <div class="history-header">
+            <h2>Danh Sách Đơn Hàng Đã Lưu (<span id="orderCount">0</span>)</h2>
+            <input type="text" class="search-input" id="searchOrder" placeholder="Tìm theo mã đơn hoặc tên khách..." oninput="renderHistory()">
+        </div>
+        <div class="history-list" id="historyList">
+            <!-- Danh sách đơn đã lưu hiển thị ở đây -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentItems = [];
+    let currentOrderCode = "";
+    let currentOrderDate = "";
+    let editingOrderId = null;
+
+    // Khởi tạo khi mở phần mềm
+    window.onload = function() {
+        loadShopInfo();
+        initOrderMetadata();
+        renderItems();
+        renderHistory();
+    };
+
+    // Lưu và tải thông tin cửa hàng của bạn
+    function saveShopInfo() {
+        const name = document.getElementById("shopName").value;
+        const phone = document.getElementById("shopPhone").value;
+        localStorage.setItem("pm_shop_name", name);
+        localStorage.setItem("pm_shop_phone", phone);
+        document.getElementById("storeHeaderPreview").textContent = name.trim() !== "" ? name.toUpperCase() : "CỬA HÀNG CỦA BẠN";
+    }
+
+    function loadShopInfo() {
+        const savedName = localStorage.getItem("pm_shop_name") || "";
+        const savedPhone = localStorage.getItem("pm_shop_phone") || "";
+        document.getElementById("shopName").value = savedName;
+        document.getElementById("shopPhone").value = savedPhone;
+        document.getElementById("storeHeaderPreview").textContent = savedName.trim() !== "" ? savedName.toUpperCase() : "CỬA HÀNG CỦA BẠN";
+    }
+
+    // Tạo mã đơn hàng và thời gian tự động giống mẫu
+    function initOrderMetadata() {
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const shortYear = String(year).slice(-2);
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        currentOrderDate = `${day}/${month}/${year} ${hours}:${minutes}`;
+
+        const savedOrders = JSON.parse(localStorage.getItem("pm_saved_orders") || "[]");
+        const nextNumber = savedOrders.length + 1;
+        const paddedNumber = String(nextNumber).padStart(4, '0');
+
+        currentOrderCode = `DH-${shortYear}${month}-${paddedNumber}`;
+
+        document.getElementById("displayTime").textContent = `Đơn đặt hàng · ${currentOrderDate}`;
+        document.getElementById("displayOrderCode").textContent = currentOrderCode;
+        document.getElementById("displayOrderBadge").textContent = `SỐ ${nextNumber} · HĐ`;
+    }
+
+    // Định dạng số tiền VNĐ
+    function formatMoney(num) {
+        return Number(num).toLocaleString('vi-VN');
+    }
+
+    // Thêm mặt hàng vào bảng
+    function addItem() {
+        const codeInput = document.getElementById("itemCode").value.trim();
+        const nameInput = document.getElementById("itemName").value.trim();
+        const unitInput = document.getElementById("itemUnit").value.trim() || "cái";
+        const qtyInput = parseFloat(document.getElementById("itemQty").value);
+        const priceInput = parseFloat(document.getElementById("itemPrice").value);
+
+        if (!nameInput) {
+            alert("Vui lòng nhập tên hàng hóa / sản phẩm!");
+            document.getElementById("itemName").focus();
+            return;
+        }
+        if (isNaN(qtyInput) || qtyInput <= 0) {
+            alert("Vui lòng nhập số lượng lớn hơn 0!");
+            document.getElementById("itemQty").focus();
+            return;
+        }
+        if (isNaN(priceInput) || priceInput < 0) {
+            alert("Vui lòng nhập đơn giá hợp lệ!");
+            document.getElementById("itemPrice").focus();
+            return;
+        }
+
+        const autoCode = codeInput !== "" ? codeInput.toUpperCase() : `SP-${String(currentItems.length + 1).padStart(2, '0')}`;
+
+        currentItems.push({
+            code: autoCode,
+            name: nameInput,
+            unit: unitInput,
+            qty: qtyInput,
+            price: priceInput,
+            total: qtyInput * priceInput
+        });
+
+        // Xóa trắng ô nhập để nhập món tiếp theo
+        document.getElementById("itemCode").value = "";
+        document.getElementById("itemName").value = "";
+        document.getElementById("itemUnit").value = "";
+        document.getElementById("itemQty").value = "";
+        document.getElementById("itemPrice").value = "";
+        document.getElementById("itemName").focus();
+
+        renderItems();
+    }
+
+    // Xóa một dòng hàng
+    function removeItem(index) {
+        currentItems.splice(index, 1);
+        renderItems();
+    }
+
+    // Hiển thị bảng hàng hóa và tính tổng tiền
+    function renderItems() {
+        const tbody = document.getElementById("orderItemsBody");
+        tbody.innerHTML = "";
+
+        let grandTotal = 0;
+
+        if (currentItems.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding: 20px;">Chưa có mặt hàng nào trong đơn. Hãy nhập mặt hàng ở khung phía trên.</td></tr>`;
+        } else {
+            currentItems.forEach((item, index) => {
+                grandTotal += item.total;
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td class="item-code">${item.code}</td>
+                    <td>
+                        <strong>${item.name}</strong>
+                        <div class="item-sub">${formatMoney(item.qty)} ${item.unit} × ${formatMoney(item.price)}</div>
+                    </td>
+                    <td class="text-right">${formatMoney(item.qty)} ${item.unit}</td>
+                    <td class="text-right">${formatMoney(item.price)}</td>
+                    <td class="text-right amount-cell">${formatMoney(item.total)}</td>
+                    <td class="col-action text-right">
+                        <button class="btn-del-row" onclick="removeItem(${index})">X</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        const paid = parseFloat(document.getElementById("paidAmount").value) || 0;
+        const debt = grandTotal - paid;
+
+        document.getElementById("subTotalDisplay").textContent = formatMoney(grandTotal) + " đ";
+        document.getElementById("grandTotalDisplay").textContent = formatMoney(grandTotal) + " đ";
+        document.getElementById("debtDisplay").textContent = formatMoney(debt > 0 ? debt : 0) + " đ";
+    }
+
+    // Lưu đơn hàng vào bộ nhớ trình duyệt
+    function saveOrder() {
+        if (currentItems.length === 0) {
+            alert("Đơn hàng đang trống, vui lòng thêm ít nhất 1 mặt hàng trước khi lưu!");
+            return;
+        }
+
+        const customerName = document.getElementById("customerName").value.trim() || "Khách lẻ";
+        const customerNote = document.getElementById("customerNote").value.trim();
+        const paidAmount = parseFloat(document.getElementById("paidAmount").value) || 0;
+        const grandTotal = currentItems.reduce((sum, item) => sum + item.total, 0);
+
+        let savedOrders = JSON.parse(localStorage.getItem("pm_saved_orders") || "[]");
+
+        const orderData = {
+            id: editingOrderId || Date.now(),
+            code: currentOrderCode,
+            date: currentOrderDate,
+            customerName: customerName,
+            customerNote: customerNote,
+            items: currentItems,
+            paidAmount: paidAmount,
+            grandTotal: grandTotal
+        };
+
+        if (editingOrderId) {
+            const idx = savedOrders.findIndex(o => o.id === editingOrderId);
+            if (idx !== -1) {
+                savedOrders[idx] = orderData;
+            }
+            editingOrderId = null;
+        } else {
+            savedOrders.unshift(orderData);
+        }
+
+        localStorage.setItem("pm_saved_orders", JSON.stringify(savedOrders));
+        alert("Đã lưu đơn hàng " + currentOrderCode + " thành công!");
+        renderHistory();
+    }
+
+    // Tạo đơn hàng mới tinh
+    function createNewOrder() {
+        currentItems = [];
+        editingOrderId = null;
+        document.getElementById("customerName").value = "";
+        document.getElementById("customerNote").value = "";
+        document.getElementById("paidAmount").value = "0";
+        initOrderMetadata();
+        renderItems();
+    }
+
+    // Hiển thị danh sách đơn hàng đã lưu
+    function renderHistory() {
+        const listEl = document.getElementById("historyList");
+        const keyword = document.getElementById("searchOrder").value.toLowerCase().trim();
+        const savedOrders = JSON.parse(localStorage.getItem("pm_saved_orders") || "[]");
+
+        const filtered = savedOrders.filter(o =>
+            o.code.toLowerCase().includes(keyword) ||
+            o.customerName.toLowerCase().includes(keyword)
+        );
+
+        document.getElementById("orderCount").textContent = savedOrders.length;
+        listEl.innerHTML = "";
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:15px;">Chưa có đơn hàng nào được lưu.</div>`;
+            return;
+        }
+
+        filtered.forEach(order => {
+            const debt = order.grandTotal - (order.paidAmount || 0);
+            const debtText = debt > 0 ? ` · Còn nợ: ${formatMoney(debt)} đ` : ` · Đã thanh toán đủ`;
+
+            const div = document.createElement("div");
+            div.className = "history-item";
+            div.innerHTML = `
+                <div class="history-info">
+                    <strong>${order.code}</strong> — <span>${order.customerName}</span>
+                    <p>${order.date} · ${order.items.length} mặt hàng${debtText}</p>
+                </div>
+                <div class="history-actions">
+                    <span class="history-total">${formatMoney(order.grandTotal)} đ</span>
+                    <button class="btn-small btn-view" onclick="loadOrderToEdit(${order.id})">Mở / In</button>
+                    <button class="btn-small btn-remove" onclick="deleteSavedOrder(${order.id})">Xóa</button>
+                </div>
+            `;
+            listEl.appendChild(div);
+        });
+    }
+
+    // Mở lại đơn cũ lên phiếu để xem, sửa hoặc in lại
+    function loadOrderToEdit(id) {
+        const savedOrders = JSON.parse(localStorage.getItem("pm_saved_orders") || "[]");
+        const order = savedOrders.find(o => o.id === id);
+        if (!order) return;
+
+        editingOrderId = order.id;
+        currentOrderCode = order.code;
+        currentOrderDate = order.date;
+        currentItems = JSON.parse(JSON.stringify(order.items));
+
+        document.getElementById("displayTime").textContent = `Đơn đặt hàng · ${order.date}`;
+        document.getElementById("displayOrderCode").textContent = order.code;
+        document.getElementById("customerName").value = order.customerName;
+        document.getElementById("customerNote").value = order.customerNote || "";
+        document.getElementById("paidAmount").value = order.paidAmount || 0;
+
+        renderItems();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Xóa đơn khỏi lịch sử
+    function deleteSavedOrder(id) {
+        if (!confirm("Bạn có chắc muốn xóa đơn hàng này khỏi lịch sử không?")) return;
+        let savedOrders = JSON.parse(localStorage.getItem("pm_saved_orders") || "[]");
+        savedOrders = savedOrders.filter(o => o.id !== id);
+        localStorage.setItem("pm_saved_orders", JSON.stringify(savedOrders));
+        renderHistory();
+    }
+
+    // Đọc tổng tiền bằng giọng nói tiếng Việt
+    function readTotalVoice() {
+        const grandTotal = currentItems.reduce((sum, item) => sum + item.total, 0);
+        if (grandTotal === 0) {
+            alert("Đơn hàng chưa có tiền để đọc!");
+            return;
+        }
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const amThanh = new SpeechSynthesisUtterance(`Tổng cộng đơn hàng là ${grandTotal} đồng`);
+            amThanh.lang = "vi-VN";
+            amThanh.rate = 0.95;
+            window.speechSynthesis.speak(amThanh);
+        } else {
+            alert("Trình duyệt của bạn không hỗ trợ đọc giọng nói.");
+        }
+    }
+</script>
+
+</body>
+</html>
